@@ -29,7 +29,7 @@ Transform:
   m_GameObject: {fileID: 586788964299235242}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.33, y: 0.33, z: 1}
+  m_LocalScale: {x: 0.5, y: 0.5, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
@@ -100,10 +100,10 @@ Rigidbody2D:
   m_UseFullKinematicContacts: 0
   m_UseAutoMass: 0
   m_Mass: 1
-  m_LinearDrag: 0
-  m_AngularDrag: 0.05
+  m_LinearDrag: 0.1
+  m_AngularDrag: 0.5
   m_GravityScale: 0.1
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 6200000, guid: 3178e450564f01e45944ac25ae153845, type: 2}
   m_Interpolate: 0
   m_SleepingMode: 1
   m_CollisionDetection: 1
@@ -136,3 +136,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 324a79df206ecd74ea61fbadbf3ce141, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  sprite: {fileID: 586788964299235246}
+  dropped: 0
+  matchRadius: 0.55

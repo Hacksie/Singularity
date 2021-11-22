@@ -5,20 +5,25 @@ namespace HackedDesign
     public class PlayingState : IState
     {
         private float nextSpawn = 0;
-        public PlayingState()
+        private Spawner spawner;
+        private UI.AbstractPresenter hud;
+        public PlayingState(Spawner spawner, UI.AbstractPresenter hud)
         {
+            this.spawner = spawner;
+            this.hud = hud;
         }
 
-        public bool Playing => false;
+        public bool Playing => true;
 
         public void Begin()
         {
-            
+            this.hud.Show();
+            Time.timeScale = 1;
         }
 
         public void End()
         {
-            
+            this.hud.Hide();
         }
 
         public void FixedUpdate()
@@ -33,11 +38,17 @@ namespace HackedDesign
 
         public void Update()
         {
+            if(spawner.CurrentBall == null || spawner.CurrentBall.dropped && spawner.CurrentBall.IsStopped())
+            {
+                spawner.DropNextBall();
+            }
+            this.hud.Repaint();
+            /*
             if(Time.time > nextSpawn)
             {
                 nextSpawn = Time.time + 5.0f;
-                Game.Instance.SpawnBall(0);
-            }
+                spawner.DropBall();
+            }*/
         }
     }
 }

@@ -8,12 +8,21 @@ namespace HackedDesign
     {
         [SerializeField] private SpriteRenderer sprite;
         [SerializeField] private new Collider2D collider;
-        [SerializeField] private Effector2D effector;
+        [SerializeField] public Effector2D effector;
         [SerializeField] private Color off;
         [SerializeField] private Color over;
         [SerializeField] private Color on;
 
+        public bool isOver = false;
+
+        private Animator animator;
+
         float clearTimer = 0;
+
+        void Awake()
+        {
+            animator = GetComponent<Animator>();
+        }
 
         void Start()
         {
@@ -27,14 +36,17 @@ namespace HackedDesign
 
         public void Over()
         {
-            sprite.color = over;
+            //sprite.color = over;
+            isOver = true;
+
         }
 
         public void On()
         {
             //collider.enabled = true;
+            Debug.Log("On");
             effector.enabled = true;
-            clearTimer = Time.time + 0.1f;
+            clearTimer = Time.time + 0.2f;
             sprite.color = on;
         }
 
@@ -43,15 +55,22 @@ namespace HackedDesign
             //collider.enabled = false;
             effector.enabled = false;
             sprite.color = off;
+            isOver = false;    
 
         }
 
         void Update()
         {
-            // if(collider.enabled && Time.time > clearTimer)
+            // if(effector.enabled && Time.time > clearTimer)
             // {
             //     Off();
             // }
+            Animate();
+        }
+
+        void Animate()
+        {
+            animator.SetBool("Play", effector.enabled || isOver);
         }
 
         void OnTriggerStay2D(Collider2D other)
@@ -65,7 +84,7 @@ namespace HackedDesign
 
         void OnTriggerExit2D(Collider2D other)
         {
-            Debug.Log("Exit");
+            //Debug.Log("Exit");
             if(other.CompareTag("Ball"))
             {
                 Off();
