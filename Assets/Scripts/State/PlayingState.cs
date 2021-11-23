@@ -17,8 +17,8 @@ namespace HackedDesign
 
         public void Begin()
         {
+            Reset();
             this.hud.Show();
-            Time.timeScale = 1;
         }
 
         public void End()
@@ -38,17 +38,26 @@ namespace HackedDesign
 
         public void Update()
         {
+            if(Game.Instance.CurrentScore > Game.Instance.TopScore)
+            {
+                Game.Instance.TopScore = Game.Instance.CurrentScore;
+            }
+
             if(spawner.CurrentBall == null || spawner.CurrentBall.dropped && spawner.CurrentBall.IsStopped())
             {
+                Debug.Log("Drop");
                 spawner.DropNextBall();
             }
             this.hud.Repaint();
-            /*
-            if(Time.time > nextSpawn)
-            {
-                nextSpawn = Time.time + 5.0f;
-                spawner.DropBall();
-            }*/
+        }
+
+        private void Reset()
+        {
+            Time.timeScale = 1;
+            Game.Instance.CurrentScore = 0;
+            Physics2D.gravity = new Vector2(0, -0.9f);
+            this.spawner.Reset();
+            this.spawner.SpawnBall();
         }
     }
 }

@@ -7,7 +7,6 @@ namespace HackedDesign
     public class Game : MonoBehaviour
     {
         [SerializeField] private Ball ballPrefab;   
-        [SerializeField] private float baseSpawnTime = 2.0f;
         [SerializeField] List<Color> colors = new List<Color>();
         [SerializeField] private Transform parent;
         [SerializeField] private Spawner spawner;
@@ -43,6 +42,7 @@ namespace HackedDesign
 
         public int CurrentScore { get => currentScore; set => currentScore = value; }
         public int TopScore { get => topScore; set => topScore = value; }
+        
 
         Game()
         {
@@ -64,10 +64,10 @@ namespace HackedDesign
             Debug.Log("Game over");
         }
 
-        public void InceaseScore(int amount)
-        {
-            currentScore += amount;
-        }
+        // public void InceaseScore(int amount)
+        // {
+        //     currentScore += amount;
+        // }
 
         public void SpawnBall() 
         {

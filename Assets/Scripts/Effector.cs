@@ -8,7 +8,7 @@ namespace HackedDesign
     {
         [SerializeField] private SpriteRenderer sprite;
         [SerializeField] private new Collider2D collider;
-        [SerializeField] public Effector2D effector;
+        [SerializeField] public AreaEffector2D effector;
         [SerializeField] private Color off;
         [SerializeField] private Color over;
         [SerializeField] private Color on;
@@ -43,16 +43,14 @@ namespace HackedDesign
 
         public void On()
         {
-            //collider.enabled = true;
-            Debug.Log("On");
             effector.enabled = true;
+            effector.forceMagnitude = 2 + (-1 * Physics2D.gravity.y);
             clearTimer = Time.time + 0.2f;
             sprite.color = on;
         }
 
         public void Off()
         {
-            //collider.enabled = false;
             effector.enabled = false;
             sprite.color = off;
             isOver = false;    
@@ -61,10 +59,6 @@ namespace HackedDesign
 
         void Update()
         {
-            // if(effector.enabled && Time.time > clearTimer)
-            // {
-            //     Off();
-            // }
             Animate();
         }
 

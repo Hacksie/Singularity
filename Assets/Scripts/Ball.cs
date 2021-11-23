@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.Linq;
 
 namespace HackedDesign
 {
@@ -30,35 +31,14 @@ namespace HackedDesign
             dropped = true;
         }
 
-
-
         public bool IsStopped() => rigidbody.velocity.sqrMagnitude < Vector2.kEpsilonNormalSqrt;
 
         public List<Ball> FindNearbyMatches(List<Ball> current)
         {
-            Collider2D[] all = Physics2D.OverlapCircleAll(this.transform.position, matchRadius);
-            List<Ball> matches = new List<Ball>();
-
-            foreach(var collider in all)
-            {
-                if(collider.CompareTag("Ball"))
-                {
-                    var ball = collider.gameObject.GetComponent<Ball>();
-                    if(current.Contains(ball)) // Ignore it if it's already in the list
-                    {
-                        continue;
-                    }
-
-                    if(ball.Color == Color)
-                    {
-                        matches.Add(ball);
-                    }
-                }
-            }
-
+            var matches = Physics2D.OverlapCircleAll(this.transform.position, matchRadius).Where(c => c.CompareTag("Ball")).Select(c => c.GetComponent<Ball>()).Where(b => b.Color == Color && !current.Contains(b));
             current.AddRange(matches);
 
-            foreach(var match in matches)
+            foreach (var match in matches)
             {
                 current = match.FindNearbyMatches(current);
             }
@@ -66,42 +46,53 @@ namespace HackedDesign
             return current;
         }
 
-
         void OnCollisionEnter2D(Collision2D collision)
         {
             if (collision.gameObject.CompareTag("Floor") || collision.gameObject.CompareTag("Ball"))
             {
-                rigidbody.velocity = Vector3.zero;
-                rigidbody.Sleep();
+                Stop();
+            }
 
-                if(transform.position.y > 2.25f)
-                {
-                    Game.Instance.SetGameOver();
-                }
-
-                var newList = new List<Ball>();
-                newList.Add(this);
-
-                var matches = FindNearbyMatches(newList);
-
-                int factor = 1;
-                if(matches.Count >= 3)
-                {
-                    for (int i = 0; i < matches.Count; i++)
-                    {
-                        Ball match = matches[i];
-                        match.gameObject.SetActive(false);
-                        Destroy(match.gameObject);
-                        if(i > 3)
-                        {
-                            factor++;
-                        }
-                    }
-                    Game.Instance.InceaseScore(300 * factor);
-                }
-
-                
+            if (collision.gameObject.CompareTag("Bounce"))
+            {
+                AudioManager.Instance.PlayBounce();
             }
         }
+
+        private void Stop()
+        {
+            rigidbody.velocity = Vector3.zero;
+            rigidbody.Sleep();
+
+            if (IsGameOver())
+            {
+                AudioManager.Instance.PlayGameOver();
+                Game.Instance.SetMenu();
+            }
+
+            var newList = new List<Ball>();
+            newList.Add(this);
+
+            var matches = FindNearbyMatches(newList);
+
+            int factor = 1;
+            if (matches.Count >= 3)
+            {
+                for (int i = 0; i < matches.Count; i++)
+                {
+                    Ball match = matches[i];
+                    match.gameObject.SetActive(false);
+                    Destroy(match.gameObject);
+                    if (i > 3)
+                    {
+                        factor++;
+                    }
+                }
+                Game.Instance.CurrentScore += (300 * factor);
+                AudioManager.Instance.PlayScore();
+            }
+        }
+
+        private bool IsGameOver() => transform.position.y > 2.25f;
     }
 }

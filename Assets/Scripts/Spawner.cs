@@ -4,9 +4,9 @@ using UnityEngine;
 
 namespace HackedDesign
 {
-    public class Spawner : MonoBehaviour 
+    public class Spawner : MonoBehaviour
     {
-        [SerializeField] private Ball ballPrefab;   
+        [SerializeField] private Ball ballPrefab;
         [SerializeField] private float baseSpawnTime = 2.0f;
         [SerializeField] List<Color> colors = new List<Color>();
         [SerializeField] List<Ball> spawnedBalls = new List<Ball>();
@@ -20,14 +20,23 @@ namespace HackedDesign
 
         void Start()
         {
-            SpawnBall();
+            //SpawnBall();
         }
 
         void Update()
         {
-            if(Time.time > timer)
+            if (Time.time > timer)
             {
                 SpawnBall();
+            }
+        }
+
+        public void Reset()
+        {
+            for(int i = 0; i < transform.childCount; i++)
+            {
+                transform.GetChild(i).gameObject.SetActive(false);
+                Destroy(transform.GetChild(i).gameObject);
             }
         }
 
@@ -35,11 +44,15 @@ namespace HackedDesign
         {
             CurrentBall = nextBall;
             CurrentBall.Drop();
-            timer = Time.time + 2.0f;
+            var gravity = Physics2D.gravity;
+            gravity = new Vector2(gravity.x, gravity.y - 0.01f);
+            Physics2D.gravity = gravity;
+            timer = Time.time + baseSpawnTime;
+            AudioManager.Instance.PlayDrop();
         }
 
 
-        public void SpawnBall() 
+        public void SpawnBall()
         {
             // Spawn, hold then drop
             var go = Instantiate(ballPrefab.gameObject, this.transform.position, Quaternion.identity, this.transform);
@@ -48,6 +61,6 @@ namespace HackedDesign
             nextBall.SetColor(color);
             timer = float.MaxValue;
             spawnedBalls.Add(nextBall);
-        }             
+        }
     }
 }

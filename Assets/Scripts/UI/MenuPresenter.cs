@@ -4,11 +4,13 @@ namespace HackedDesign.UI
 {
     public class MenuPresenter : AbstractPresenter
     {
+        [SerializeField] UnityEngine.UI.Text topScore;
+        [SerializeField] UnityEngine.UI.Text currentScore;
         
         public override void Repaint()
         {
-            //countdownText.text = System.TimeSpan.FromMinutes(Game.Instance.Data.Time).ToString("hh':'mm");
-            //willSlider.value = Game.Instance.Data.Will;
+            topScore.text = Game.Instance.TopScore.ToString();
+            currentScore.text = Game.Instance.CurrentScore.ToString();
         }
 
         public void OnPlayClick()
